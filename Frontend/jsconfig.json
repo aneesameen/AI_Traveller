@@ -1,0 +1,31 @@
+{
+    "exclude": [
+        "node_modules"
+    ],
+    "files": [],
+    "references": [
+        {
+            "compilerOptions": {
+                // ...
+                "baseUrl": ".",
+                "checkJs": true,
+                "module": "esnext",
+                "jsx": "react",
+                "paths": {
+                    "@/*": [
+                        "./src/*"
+                    ]
+                }
+                // ...
+            }
+        }
+    ],
+    "compilerOptions": {
+        "baseUrl": ".",
+        "paths": {
+            "@/*": [
+                "./src/*"
+            ]
+        }
+    },
+}
