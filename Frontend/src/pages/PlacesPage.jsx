@@ -16,10 +16,6 @@ function PlacesPage() {
         })
     }, [])
 
-    if (!places) {
-        return <LoadingScreen />
-    }
-
     return (
         <div>
             <AccountNav />

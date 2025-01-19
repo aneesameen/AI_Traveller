@@ -47,7 +47,6 @@ app.post('/getUserInfo', async (req, res) => {
         const googleUser = response.data;
         const { email, name, picture } = googleUser;
 
-
         let user = await User.findOne({ email });
 
         if (!user) {
@@ -60,19 +59,27 @@ app.post('/getUserInfo', async (req, res) => {
             await user.save();
         }
 
-        const token = jwt.sign({ id: user._id, email: user.email }, jwtSecret, {
-            expiresIn: '7d',
-        });
+        const token = jwt.sign(
+            {
+                email: user.email,
+                id: user._id,
+            },
+            jwtSecret,
+            { expiresIn: '7d' }
+        );
 
-
-        res.cookie('token', token).json({
+        res.cookie('token', token, {
+            httpOnly: true,
+            secure: true,
+            sameSite: 'None',
+        }).json({
             user: {
                 email: user.email,
                 name: user.name,
-                picture: user.picture
+                picture: user.picture,
             },
             token,
-        })
+        });
 
     } catch (error) {
         console.error('Error fetching Google user info:', error);

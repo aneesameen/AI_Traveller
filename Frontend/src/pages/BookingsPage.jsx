@@ -17,10 +17,6 @@ function BookingsPage() {
         }))
     }, [])
 
-    if (!bookings) {
-        return <LoadingScreen />
-    }
-
     return (
         <div>
             <AccountNav />
