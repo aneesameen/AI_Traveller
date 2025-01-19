@@ -14,10 +14,16 @@ router.post('/bookings', async (req, res) => {
     const { sessionId } = req.body;
     const { token } = req.cookies;
 
+    // Check if token is provided
+    if (!token) {
+        return res.status(401).send('JWT token is required');
+    }
+
     try {
         const session = await stripe.checkout.sessions.retrieve(sessionId);
         const { metadata } = session;
 
+        // Verify JWT token
         jwt.verify(token, jwtSecret, {}, async (err, userData) => {
             if (err) {
                 console.error('JWT verification failed:', err);
@@ -43,6 +49,41 @@ router.post('/bookings', async (req, res) => {
         res.status(500).send('Internal Server Error');
     }
 });
+
+
+// router.post('/bookings', async (req, res) => {
+//     const { sessionId } = req.body;
+//     const { token } = req.cookies;
+
+//     try {
+//         const session = await stripe.checkout.sessions.retrieve(sessionId);
+//         const { metadata } = session;
+
+//         jwt.verify(token, jwtSecret, {}, async (err, userData) => {
+//             if (err) {
+//                 console.error('JWT verification failed:', err);
+//                 return res.status(401).send('Unauthorized');
+//             }
+
+//             const { place, checkIn, checkOut, noOfGuests, name, phoneNo, totalAmount } = metadata;
+//             await Booking.create({
+//                 owner: userData.id,
+//                 place,
+//                 checkIn,
+//                 checkOut,
+//                 noOfGuests,
+//                 name,
+//                 phoneNo,
+//                 price: totalAmount,
+//             });
+
+//             res.json({ message: 'Booking saved successfully!' });
+//         });
+//     } catch (error) {
+//         console.error('Error saving booking:', error);
+//         res.status(500).send('Internal Server Error');
+//     }
+// });
 
 
 
