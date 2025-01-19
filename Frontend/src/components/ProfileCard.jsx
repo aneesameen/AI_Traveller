@@ -1,6 +1,7 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { Navigate } from "react-router-dom";
+import { toast } from "sonner";
 
 function ProfileCard({ user, luser }) {
 
@@ -26,22 +27,49 @@ function ProfileCard({ user, luser }) {
         setIsEditing(true);
     };
 
-    const handleSave = (ev) => {
+
+    const handleSave = async (ev) => {
         ev.preventDefault();
+
+        if (!(user || luser)) {
+            alert("You need to be logged in to edit your profile.");
+            return;
+        }
+
+        const id = user?._id || luser?.id;
+
         try {
-            if (user || luser) {
-                const id = user?._id
-                axios.put("/user", {
-                    id,
-                    name, email, password
-                })
-                setIsEditing(false);
-                location.reload()
-            }
+            const response = await axios.put("/user", {
+                id,
+                name,
+                email,
+                password,
+            });
+            setIsEditing(false);
+            location.reload();
+            toast("Profile updated successfully!");
+
         } catch (error) {
-            alert("cant edit the profile")
+            toast.error("Unable to edit the profile. Please try again.");
         }
     };
+
+    // const handleSave = (ev) => {
+    //     ev.preventDefault();
+    //     try {
+    //         if (user || luser) {
+    //             const id = user?._id
+    //             axios.put("/user", {
+    //                 id,
+    //                 name, email, password
+    //             })
+    //             setIsEditing(false);
+    //             location.reload()
+    //         }
+    //     } catch (error) {
+    //         alert("cant edit the profile")
+    //     }
+    // };
 
     const handleCancel = () => {
         setIsEditing(false);
