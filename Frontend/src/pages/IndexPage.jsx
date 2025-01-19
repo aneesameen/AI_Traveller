@@ -31,7 +31,7 @@ function IndexPage() {
 
     if (searchResults?.length > 0) {
         return (
-            <div className="mt-16 gap-x-6 gap-y-8 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+            <div className="mt-16 mb-16 gap-x-6 gap-y-8 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
                 {searchResults?.length > 0 && searchResults.map(place => (
                     <Link onClick={clearSaerchResults} to={`/place/${place?._id}`} key={place._id} className="hover:-translate-y-2 duration-200 cursor-pointer">
                         <div className="bg-gray-500 mb-2 rounded-2xl flex">
@@ -52,7 +52,7 @@ function IndexPage() {
 
 
     return (
-        <div className="mt-16 gap-x-6 gap-y-8 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+        <div className="mt-16 mb-16 gap-x-6 gap-y-8 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
             {allData?.length > 0 && allData.map(place => (
                 <Link to={`/place/${place?._id}`} key={place._id} className="hover:-translate-y-2 duration-200 cursor-pointer">
                     <div className="bg-gray-500 mb-2 rounded-2xl flex">
