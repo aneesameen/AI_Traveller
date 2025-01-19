@@ -5,6 +5,7 @@ import { BASE_URL } from "../Constants";
 import { differenceInCalendarDays, format } from "date-fns";
 import { SlCalender } from "react-icons/sl";
 import { Link } from "react-router-dom";
+import LoadingScreen from "../components/LoadingScreen"
 
 function BookingsPage() {
 
@@ -15,6 +16,11 @@ function BookingsPage() {
             setBookings(response.data)
         }))
     }, [])
+
+    if (!bookings) {
+        return <LoadingScreen />
+    }
+
     return (
         <div>
             <AccountNav />
@@ -23,7 +29,7 @@ function BookingsPage() {
                 {bookings?.length > 0 &&
                     bookings.map((booking) => (
                         <Link to={`/account/bookings/${booking?._id}`} className="md:flex gap-4 bg-gray-200 rounded-2xl overflow-hidden" key={booking?._id}>
-                            <div className="flex w-full h-48 sm:w-40 sm:h-40 md:w-48 md:h-48 lg:w-56 lg:h-56 bg-gray-300 rounded-2xl shrink-0 overflow-hidden">
+                            <div className="flex w-full h-48 sm:w-40 sm:h-40 md:w-48 md:h-48 bg-gray-300 rounded-2xl shrink-0 overflow-hidden">
                                 {booking?.place?.photos.length > 0 && (
                                     <img
                                         className="object-cover w-full h-full"

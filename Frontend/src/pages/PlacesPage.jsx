@@ -5,6 +5,7 @@ import AccountNav from "../components/AccountNav";
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { BASE_URL } from "../Constants";
+import LoadingScreen from "../components/LoadingScreen";
 
 function PlacesPage() {
     const [places, setPlaces] = useState("");
@@ -15,6 +16,9 @@ function PlacesPage() {
         })
     }, [])
 
+    if (!places) {
+        return <LoadingScreen />
+    }
 
     return (
         <div>
