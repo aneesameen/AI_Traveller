@@ -27,13 +27,47 @@ router.post("/places", (req, res) => {
 
 // -----------------------Get all places of one user-----------------
 
+
 router.get("/user-places", (req, res) => {
     const { token } = req.cookies;
+
+    // Check if token exists
+    if (!token) {
+        return res.status(401).json({ message: "Token is required" });
+    }
+
+    // Verify the token
     jwt.verify(token, jwtSecret, {}, async (err, userData) => {
+        if (err) {
+            return res.status(403).json({ message: "Invalid or expired token" });
+        }
+
+        // Check if userData is valid
+        if (!userData || !userData.id) {
+            return res.status(403).json({ message: "Invalid token, user data not found" });
+        }
+
         const { id } = userData;
-        res.json(await Place.find({ owner: id }))
-    })
-})
+
+        try {
+            // Fetch places owned by the user
+            const userPlaces = await Place.find({ owner: id });
+            return res.json(userPlaces);
+        } catch (err) {
+            return res.status(500).json({ message: "Error fetching user places", error: err });
+        }
+    });
+});
+
+
+
+// router.get("/user-places", (req, res) => {
+//     const { token } = req.cookies;
+//     jwt.verify(token, jwtSecret, {}, async (err, userData) => {
+//         const { id } = userData;
+//         res.json(await Place.find({ owner: id }))
+//     })
+// })
 
 
 // --------------------demo--------------------
