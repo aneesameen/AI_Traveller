@@ -18,7 +18,7 @@ function BookingsPage() {
             setBookings(response.data)
             setLoading(false);
         }))
-    }, [])
+    }, [bookings])
 
 
     if (!bookings.length > 0 && !loading) {

@@ -28,8 +28,8 @@ function SingleBookingPage() {
     const deleteBooking = async () => {
         try {
             await axios.delete("/booking/" + id);
-            setBooking(null);
             setRedirect(true);
+            setBooking(null);
         } catch (error) {
             alert("error while deleting")
         }
