@@ -12,6 +12,9 @@ const normalizedPath = require('path').normalize(uploadsPath);
 
 router.post("/upload-by-link", async (req, res) => {
     const { link } = req.body;
+    if (!link || typeof link !== 'string') {
+        return res.status(400).json({ error: 'URL is required and must be a valid string' });
+    }
     const newName = "photo" + Date.now() + ".jpg";
     try {
         await imageDownloader.image({

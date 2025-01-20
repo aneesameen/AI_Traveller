@@ -137,10 +137,11 @@ function BookingCard({ singlePlace }) {
                                 value={name}
                                 onChange={ev => setName(ev.target.value)}
                             />
-                            <label>Phone:</label>
+                            <label>Phone No:</label>
                             <input className="outline-none border px-2 rounded-2xl ml-2 capitalize"
                                 type="tel"
                                 value={phoneNo}
+                                placeholder="9797xxxxxx"
                                 onChange={ev => setPhoneNo(ev.target.value)}
                             />
                         </div>

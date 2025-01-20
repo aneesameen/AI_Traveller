@@ -20,7 +20,7 @@ function ProfileCard({ user, luser }) {
             setName(data?.name);
             setEmail(data?.email);
         })
-    }, [user || luser])
+    }, [user, luser])
 
 
     const handleEdit = () => {
@@ -46,7 +46,7 @@ function ProfileCard({ user, luser }) {
                 password,
             });
             setIsEditing(false);
-            location.reload();
+            // location.reload();
             toast("Profile updated successfully!");
 
         } catch (error) {
