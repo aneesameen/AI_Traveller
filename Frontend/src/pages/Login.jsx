@@ -24,6 +24,7 @@ function Login() {
     const [password, setPassword] = useState("")
     const [redirect, setRedirect] = useState(false);
     const [OpenBox, setOpenBox] = useState(false);
+    const [loading, setLoading] = useState(false);
 
     const { setUser, user } = useContext(UserContext)
 
@@ -79,12 +80,15 @@ function Login() {
             alert("Please enter both email and password.");
             return;
         }
+        setLoading(true);
         try {
             const respone = await axios.post('/login', { email, password });
             setUser(respone.data);
+            setLoading(false);
             setRedirect(true)
         } catch (e) {
             toast.error("Login failed. Please try again")
+            setLoading(false);
         }
     }
 
@@ -112,7 +116,18 @@ function Login() {
                         value={password}
                         onChange={ev => setPassword(ev.target.value)}
                     />
-                    <button className="primary">Login</button>
+                    <button
+                        className={`${loading
+                            ? "bg-blue-500 text-white rounded-lg flex items-center justify-center primary"
+                            : "bg-blue-500 text-white rounded-lg flex items-center justify-center primary"
+                            }`}
+                    >
+                        {loading ? (
+                            <div className="w-5 h-5 border-4 border-t-4 border-white border-solid rounded-full animate-spin" />
+                        ) : (
+                            "Login"
+                        )}
+                    </button>
                 </form>
                 <h2 className="text-center my-6">OR</h2>
                 <div>

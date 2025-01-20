@@ -98,19 +98,48 @@ router.post("/login", async (req, res) => {
 
 
 // --------------------profile of User-------------------
-
-router.get("/profile", (req, res) => {
+router.get("/profile", async (req, res) => {
     const { token } = req.cookies;
-    if (token) {
-        jwt.verify(token, jwtSecret, {}, async (err, userData) => {
-            if (err) throw err;
-            const { name, email, _id } = await User.findById(userData.id);
-            res.json({ name, email, _id })
-        });
-    } else {
-        res.json(null);
+
+    if (!token) {
+        return res.json(null); // No token provided, return null
     }
-})
+
+    jwt.verify(token, jwtSecret, {}, async (err, userData) => {
+        if (err) {
+            console.error("JWT verification error:", err);
+            return res.status(403).json({ error: "Invalid or expired token" });
+        }
+
+        try {
+            const user = await User.findById(userData.id);
+
+            if (!user) {
+                return res.status(404).json({ error: "User not found" });
+            }
+
+            const { name, email, _id } = user;
+            res.json({ name, email, _id });
+        } catch (dbError) {
+            console.error("Database error:", dbError);
+            res.status(500).json({ error: "Database error, please try again later" });
+        }
+    });
+});
+
+
+// router.get("/profile", (req, res) => {
+//     const { token } = req.cookies;
+//     if (token) {
+//         jwt.verify(token, jwtSecret, {}, async (err, userData) => {
+//             if (err) throw err;
+//             const { name, email, _id } = await User.findById(userData.id);
+//             res.json({ name, email, _id })
+//         });
+//     } else {
+//         res.json(null);
+//     }
+// })
 
 
 // --------------------Update profile of User-------------------

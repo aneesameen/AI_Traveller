@@ -7,22 +7,52 @@ const jwtSecret = 'hjwdj$jhgjvgg54e6rgvjh68';
 
 // ----------------------Add a new place-----------------
 
+
 router.post("/places", (req, res) => {
     const { token } = req.cookies;
     const {
         title, address, addedPhotos, description,
         perks, extraInfo, checkIn, checkOut, maxGuest, price
     } = req.body;
+
+    if (!token) {
+        return res.status(401).json({ error: "Token is missing" });
+    }
+
     jwt.verify(token, jwtSecret, {}, async (err, userData) => {
-        if (err) throw err;
-        const placeDoc = await Place.create({
-            owner: userData.id,
-            title, address, photos: addedPhotos, description,
-            perks, extraInfo, checkIn, checkOut, maxGuest, price
-        });
-        res.json(placeDoc);
-    })
-})
+        if (err) {
+            return res.status(403).json({ error: "Invalid token" });
+        }
+
+        try {
+            const placeDoc = await Place.create({
+                owner: userData.id,
+                title, address, photos: addedPhotos, description,
+                perks, extraInfo, checkIn, checkOut, maxGuest, price
+            });
+            res.json(placeDoc);
+        } catch (error) {
+            res.status(500).json({ error: "Database error" });
+        }
+    });
+});
+
+// router.post("/places", (req, res) => {
+//     const { token } = req.cookies;
+//     const {
+//         title, address, addedPhotos, description,
+//         perks, extraInfo, checkIn, checkOut, maxGuest, price
+//     } = req.body;
+//     jwt.verify(token, jwtSecret, {}, async (err, userData) => {
+//         if (err) throw err;
+//         const placeDoc = await Place.create({
+//             owner: userData.id,
+//             title, address, photos: addedPhotos, description,
+//             perks, extraInfo, checkIn, checkOut, maxGuest, price
+//         });
+//         res.json(placeDoc);
+//     })
+// })
 
 
 // -----------------------Get all places of one user-----------------
@@ -104,19 +134,61 @@ router.put("/places", async (req, res) => {
         id, title, address, addedPhotos, description,
         perks, extraInfo, checkIn, checkOut, maxGuest, price
     } = req.body;
+
+    if (!token) {
+        return res.status(401).json({ error: "Token is missing" });
+    }
+
     jwt.verify(token, jwtSecret, {}, async (err, userData) => {
-        if (err) throw err;
-        const placeDoc = await Place.findById(id);
-        if (userData.id === placeDoc.owner.toString()) {
+        if (err) {
+            return res.status(403).json({ error: "Invalid or expired token" });
+        }
+
+        try {
+            const placeDoc = await Place.findById(id);
+            if (!placeDoc) {
+                return res.status(404).json({ error: "Place not found" });
+            }
+
+            if (userData.id !== placeDoc.owner.toString()) {
+                return res.status(403).json({ error: "Unauthorized to update this place" });
+            }
+
+            // Update the place details
             placeDoc.set({
                 title, address, photos: addedPhotos, description,
                 perks, extraInfo, checkIn, checkOut, maxGuest, price
-            })
-            await placeDoc.save()
-            res.json("ok");
+            });
+
+            await placeDoc.save();
+            res.json({ message: "Place updated successfully" });
+        } catch (dbError) {
+            console.error("Database error:", dbError);
+            res.status(500).json({ error: "Database error, please try again" });
         }
-    })
-})
+    });
+});
+
+
+// router.put("/places", async (req, res) => {
+//     const { token } = req.cookies;
+//     const {
+//         id, title, address, addedPhotos, description,
+//         perks, extraInfo, checkIn, checkOut, maxGuest, price
+//     } = req.body;
+//     jwt.verify(token, jwtSecret, {}, async (err, userData) => {
+//         if (err) throw err;
+//         const placeDoc = await Place.findById(id);
+//         if (userData.id === placeDoc.owner.toString()) {
+//             placeDoc.set({
+//                 title, address, photos: addedPhotos, description,
+//                 perks, extraInfo, checkIn, checkOut, maxGuest, price
+//             })
+//             await placeDoc.save()
+//             res.json("ok");
+//         }
+//     })
+// })
 
 
 // -----------------------Delete the place of this id-----------------

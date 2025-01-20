@@ -8,6 +8,7 @@ function Register() {
     const [name, setName] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const [loading, setLoading] = useState(false);
 
 
     const registerUser = async (ev) => {
@@ -15,6 +16,7 @@ function Register() {
         if (!name || !email || !password) {
             toast.error("Fill in Every detail")
         } else {
+            setLoading(true);
             try {
                 await axios.post('/register', {
                     name,
@@ -22,8 +24,10 @@ function Register() {
                     password
                 });
                 toast("Registration Successfull. Please Login")
+                setLoading(false);
             } catch (e) {
                 toast.error("Registration failed. Please try again later");
+                setLoading(false);
             }
         }
         setName("");
@@ -48,7 +52,18 @@ function Register() {
                         placeholder="password"
                         value={password}
                         onChange={ev => setPassword(ev.target.value)} />
-                    <button className="primary">Sign Up</button>
+                    <button
+                        className={`${loading
+                            ? "bg-blue-500 text-white rounded-lg flex items-center justify-center primary"
+                            : "bg-blue-500 text-white rounded-lg flex items-center justify-center primary"
+                            }`}
+                    >
+                        {loading ? (
+                            <div className="w-5 h-5 border-4 border-t-4 border-white border-solid rounded-full animate-spin" />
+                        ) : (
+                            "SignUp"
+                        )}
+                    </button>
                     <div className="text-center py-2 text-gray-500">
                         Already have an account? <Link to={'/login'} className="text-black underline hover:text-primary">
                             LogIn

@@ -25,9 +25,10 @@ function SingleBookingPage() {
         }
     }, [id]);
 
-    const deleteBooking = () => {
+    const deleteBooking = async () => {
         try {
-            axios.delete("/booking/" + id);
+            await axios.delete("/booking/" + id);
+            setBooking(null);
             setRedirect(true);
         } catch (error) {
             alert("error while deleting")
