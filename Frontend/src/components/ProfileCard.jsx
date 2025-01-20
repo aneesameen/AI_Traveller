@@ -46,7 +46,7 @@ function ProfileCard({ user, luser }) {
                 password,
             });
             setIsEditing(false);
-            // location.reload();
+            location.reload();
             toast("Profile updated successfully!");
 
         } catch (error) {
