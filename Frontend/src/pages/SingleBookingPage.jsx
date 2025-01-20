@@ -29,7 +29,6 @@ function SingleBookingPage() {
         try {
             await axios.delete("/booking/" + id);
             setRedirect(true);
-            setBooking(null);
         } catch (error) {
             alert("error while deleting")
         }
