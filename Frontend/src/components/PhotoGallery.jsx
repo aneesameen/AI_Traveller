@@ -36,8 +36,10 @@ function PhotoGallery({ singlePlace }) {
                         <div key={index} className="w-full h-64 md:h-80 lg:h-96">
                             <img
                                 className="w-full h-full object-cover rounded-md shadow-md"
-                                src={`${BASE_URL}uploads/${pic}`}
+                                // src={`${BASE_URL}uploads/${pic}`}
+                                src={pic}
                                 alt={`Photo ${index + 1}`}
+                                onError={(e) => { e.target.src = "/hotel.png"; }}
                             />
                         </div>
                     ))}
@@ -54,7 +56,9 @@ function PhotoGallery({ singlePlace }) {
                         <img
                             onClick={() => setShowAllPics(true)}
                             className="w-full h-full object-cover rounded-l-2xl cursor-pointer"
-                            src={`${BASE_URL}uploads/${singlePlace?.photos[0]}`}
+                            // src={`${BASE_URL}uploads/${singlePlace?.photos[0]}`}
+                            src={singlePlace?.photos[0]}
+                            onError={(e) => { e.target.src = "/hotel.png"; }}
                         />
                     </div>
                 )}
@@ -63,7 +67,9 @@ function PhotoGallery({ singlePlace }) {
                         <img
                             onClick={() => setShowAllPics(true)}
                             className="w-full h-full object-cover cursor-pointer"
-                            src={`${BASE_URL}uploads/${singlePlace?.photos[1]}`}
+                            // src={`${BASE_URL}uploads/${singlePlace?.photos[1]}`}
+                            src={singlePlace?.photos[1]}
+                            onError={(e) => { e.target.src = "/hotel.png"; }}
                         />
                     </div>
                 )}
@@ -72,7 +78,9 @@ function PhotoGallery({ singlePlace }) {
                         <img
                             onClick={() => setShowAllPics(true)}
                             className="w-full h-full object-cover cursor-pointer"
-                            src={`${BASE_URL}uploads/${singlePlace?.photos[2]}`}
+                            // src={`${BASE_URL}uploads/${singlePlace?.photos[2]}`}
+                            src={singlePlace?.photos[2]}
+                            onError={(e) => { e.target.src = "/hotel.png"; }}
                         />
                     </div>
                 )}

@@ -36,7 +36,8 @@ function IndexPage() {
                     <Link onClick={clearSaerchResults} to={`/place/${place?._id}`} key={place._id} className="hover:-translate-y-2 duration-200 cursor-pointer">
                         <div className="bg-gray-500 mb-2 rounded-2xl flex">
                             {place?.photos?.[0] && (
-                                < img className="rounded-2xl aspect-square object-cover" src={`${BASE_URL}uploads/` + place?.photos[0]} alt="image" />
+                                // < img className="rounded-2xl aspect-square object-cover" src={`${BASE_URL}uploads/` + place?.photos[0]} alt="image" />
+                                < img className="rounded-2xl aspect-square object-cover" src={place?.photos[0]} alt="image" onError={(e) => { e.target.src = "/hotel.png"; }} />
                             )}
                         </div>
                         <h3 className="font-medium truncate text-lg">{place?.address} </h3>
@@ -54,10 +55,11 @@ function IndexPage() {
     return (
         <div className="mt-16 mb-16 gap-x-6 gap-y-8 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
             {allData?.length > 0 && allData.map(place => (
-                <Link to={`/place/${place?._id}`} key={place._id} className="hover:-translate-y-2 duration-200 cursor-pointer">
+                <Link to={`/place/${place?._id}`} key={place._id} className="hover:scale-105 duration-200 cursor-pointer">
                     <div className="bg-gray-500 mb-2 rounded-2xl flex">
                         {place?.photos?.[0] && (
-                            < img className="rounded-2xl aspect-square object-cover" src={`${BASE_URL}uploads/` + place?.photos[0]} alt="image" />
+                            // < img className="rounded-2xl aspect-square object-cover" src={`${BASE_URL}uploads/` + place?.photos[0]} alt="image" />
+                            < img className="rounded-2xl aspect-square object-cover" src={place?.photos[0]} alt="image" onError={(e) => { e.target.src = "/hotel.png"; }} />
                         )}
                     </div>
                     <h3 className="font-medium truncate text-lg">{place?.address} </h3>

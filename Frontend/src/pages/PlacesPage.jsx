@@ -57,14 +57,15 @@ function PlacesPage() {
             ) : (
                 <div className="mt-8 grid lg:grid-cols-2 gap-4">
                     {places.length > 0 && places.map(place => (
-                        <Link to={`/account/places/${place._id}`} className="flex cursor-pointer gap-4 bg-gray-300 hover:bg-primary transition duration-500 ease-in-out p-1 rounded-2xl" key={place}>
-                            <div className=" flex w-32 h-32 bg-gray-300 rounded-2xl shrink-0">
+                        <Link to={`/account/places/${place._id}`} className="flex cursor-pointer gap-4 bg-gray-300 hover:-translate-y-2 transition duration-500 ease-in-out p-1 rounded-2xl" key={place}>
+                            <div className=" flex w-32 h-full bg-gray-300 rounded-2xl shrink-0">
                                 {place.photos.length > 0 && (
-                                    <img className="object-cover rounded-2xl" src={`${BASE_URL}uploads/` + place?.photos[0]} alt="image" />
+                                    // <img className="object-cover rounded-2xl" src={`${BASE_URL}uploads/` + place?.photos[0]} alt="image" />
+                                    <img className="object-cover rounded-2xl" src={place?.photos[0]} alt="image" onError={(e) => { e.target.src = "/hotel.png"; }} />
                                 )}
                             </div>
                             <div className="grow-0 shrink">
-                                <h2 className="text-xl font-medium">{place?.title}</h2>
+                                <h2 className="text-xl font-medium line-clamp-3">{place?.title}</h2>
                                 <p className="line-clamp-3 md:line-clamp-4 text-sm mt-2">{place.description}</p>
                             </div>
                         </Link>

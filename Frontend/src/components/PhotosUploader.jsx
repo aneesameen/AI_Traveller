@@ -1,131 +1,154 @@
-import { BASE_URL } from "../Constants";
-import ErrorMessage from "../components/ErrorMessage";
+import { useState } from "react";
 import { AiOutlineCloudUpload } from "react-icons/ai";
 import { FaTrashAlt } from "react-icons/fa";
 import { IoIosStar } from "react-icons/io";
 import axios from "axios";
-import { useState } from "react";
-
+import { sanityClient } from "../../client";
+import ErrorMessage from "../components/ErrorMessage";
 
 function PhotosUploader({ addedPhotos, onChange }) {
-    // const [addedPhotos, setAddedPhotos] = useState([]);
+    const [loading, setLoading] = useState(false);
     const [photoLink, setPhotoLink] = useState("");
-
     const [showError, setShowError] = useState(false);
+
     const handleCloseError = () => {
         setShowError(false);
-        setPhotoLink('');
-    };
+        setPhotoLink("");
+    }
 
     const addPhotoByLink = async (ev) => {
         ev.preventDefault();
+        if (!photoLink.trim()) return;
+
         try {
-            const { data: filename } = await axios.post("/upload-by-link", ({ link: photoLink }));
-            onChange(prev => {
-                return [...prev, filename];
-            });
-            setPhotoLink('')
+            const newPhoto = { url: photoLink, _id: null };
+            console.log(newPhoto)
+            setLoading(true);
+            onChange((prev) => [...prev, newPhoto]);
+            setPhotoLink("");
+            setLoading(false);
         } catch (error) {
-            if (error) {
-                setShowError(true)
-            }
-        }
-    }
-
-
-
-    const uploadPhoto = async (ev) => {
-        try {
-            const files = ev.target.files;
-            const data = new FormData();
-
-            for (let i = 0; i < files.length; i++) {
-                data.append("photos", files[i]);
-            }
-
-            const response = await axios.post("/upload", data, {
-                headers: { "Content-Type": "multipart/form-data" },
-            });
-
-            const { data: filenames } = response;
-            onChange((prev) => [...prev, ...filenames]);
-        } catch (error) {
-            if (error) {
-                setShowError(true)
-            }
+            console.error("Error adding photo by link:", error);
+            setShowError(true);
         }
     };
 
+    const uploadImage = (e) => {
+        const selectedFiles = Array.from(e.target.files);
+        if (selectedFiles.length === 0) return;
 
-    // const uploadPhoto = (ev) => {
-    //     const files = ev.target.files;
-    //     const data = new FormData();
-    //     for (let i = 0; i < files.length; i++) {
-    //         data.append("photos", files[i]);
-    //     }
-    //     axios.post("/upload", data, {
-    //         headers: { "Content-Type": "multipart/form-data" }
-    //     }).then(response => {
-    //         const { data: filenames } = response;
-    //         onChange(prev => {
-    //             return [...prev, ...filenames];
-    //         });
-    //     })
-    // }
+        const validFiles = selectedFiles.filter((file) =>
+            ["image/png", "image/jpeg", "image/webp", "image/gif"].includes(file.type)
+        );
 
-    const handleDeletePic = (ev, filename) => {
+        if (validFiles.length === 0) {
+            setShowError(true);
+            return;
+        }
+
+        setLoading(true);
+        Promise.all(
+            validFiles.map(async (file) => {
+                const timestamp = Date.now();
+                const fileName = `photo${timestamp}-${file.name}`;
+
+                try {
+                    const document = await sanityClient.assets
+                        .upload("image", file, { contentType: file.type, filename: fileName });
+                    return ({
+                        url: document.url,
+                        _id: document._id,
+                        assetId: document.assetId,
+                    });
+                } catch (error) {
+                    console.error("Failed to upload image:", error);
+                    return null;
+                }
+            })
+        )
+            .then((uploadedPhotos) => {
+                const successfulPhotos = uploadedPhotos.filter((photo) => photo !== null);
+                onChange((prev) => [...prev, ...successfulPhotos]);
+            })
+            .finally(() => setLoading(false));
+    };
+
+    const handleDeletePic = (ev, photo) => {
         ev.preventDefault();
-        onChange([...addedPhotos.filter(photo => photo !== filename)])
-    }
+        onChange(addedPhotos.filter((p) => p.url !== photo.url));
+    };
 
-    const frontPic = (ev, filename) => {
+    const frontPic = (ev, photo) => {
         ev.preventDefault();
-        const newselectedphoto = [filename, ...addedPhotos.filter(photo => photo !== filename)]
-        onChange(newselectedphoto);
-    }
-
+        const updatedPhotos = [photo, ...addedPhotos.filter((p) => p.url !== photo.url)];
+        onChange(updatedPhotos);
+    };
 
     return (
         <>
             <div className="flex gap-2">
-                <input type="text"
+                <input
+                    type="text"
                     placeholder="Add using a link ...jpg"
                     value={photoLink}
-                    onChange={ev => setPhotoLink(ev.target.value)}
+                    onChange={(ev) => setPhotoLink(ev.target.value)}
                 />
-                <button onClick={addPhotoByLink} className="bg-gary-600 px-4 rounded-2xl hover:bg-primary">Add&nbsp;picture</button>
+                <button
+                    onClick={addPhotoByLink}
+                    className="bg-blue-400 px-4 rounded-2xl hover:bg-primary"
+                >
+                    Add&nbsp;picture
+                </button>
             </div>
 
             <div className="grid gap-2 grid-cols-3 md:grid-cols-4 lg:grid-cols-6 mt-3">
-                {addedPhotos.length > 0 && addedPhotos.map(link => (
-                    <div className="h-32 flex relative" key={link}>
-                        <img className="rounded-2xl w-full object-cover" src={`${BASE_URL}uploads/${link}`} alt="Image" />
-                        <button onClick={ev => handleDeletePic(ev, link)} className="cursor-pointer absolute bottom-1 right-2 p-1 text-white hover:text-red-600 rounded-full bg-black bg-opacity-50">
+                {addedPhotos.map((photo, index) => (
+                    <div key={index} className="h-32 flex relative">
+                        <img
+                            className="rounded-2xl w-full object-cover"
+                            src={photo.url}
+                            alt={`Photo ${index + 1}`}
+                            onError={(e) => { e.target.src = "/hotel.png"; }}
+                        />
+                        <button
+                            onClick={(ev) => handleDeletePic(ev, photo)}
+                            className="cursor-pointer absolute bottom-1 right-2 p-1 text-white hover:text-red-600 rounded-full bg-black bg-opacity-50"
+                        >
                             <FaTrashAlt />
                         </button>
-                        <button onClick={ev => frontPic(ev, link)} className="cursor-pointer absolute bottom-1 left-2 p-1 text-white hover:text-primary rounded-full bg-black bg-opacity-50">
-                            {link === addedPhotos[0] && (
-                                < IoIosStar className="text-primary" />
-                            )}
-                            {link !== addedPhotos[0] && (
+                        <button
+                            onClick={(ev) => frontPic(ev, photo)}
+                            className="cursor-pointer absolute bottom-1 left-2 p-1 text-white hover:text-primary rounded-full bg-black bg-opacity-50"
+                        >
+                            {photo === addedPhotos[0] ? (
+                                <IoIosStar className="text-primary" />
+                            ) : (
                                 <IoIosStar />
                             )}
                         </button>
                     </div>
                 ))}
+
                 {showError && (
                     <ErrorMessage
-                        message="Couldn't upload the photo. Please try again"
+                        message="Error uploading the photo. Please try again."
                         onClose={handleCloseError}
                     />
                 )}
-                <label className="h-32 cursor-pointer flex flex-col items-center justify-center border bg-transparent rounded-2xl p-2 text-lg text-gray-900">
-                    <input type="file" multiple className="hidden" onChange={uploadPhoto} />
-                    <AiOutlineCloudUpload className="w-8 h-8" />
-                    Upload from device
-                </label>
+                {loading ? (
+                    <label className="h-32 cursor-pointer flex flex-col items-center justify-center border bg-transparent rounded-2xl p-2 text-lg text-gray-900">
+                        <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-primary"></div>
+                    </label>
+                ) : (
+                    <label className="h-32 cursor-pointer flex flex-col items-center justify-center border bg-transparent rounded-2xl p-2 text-lg text-gray-900">
+                        <input type="file" multiple className="hidden" onChange={uploadImage} />
+                        <AiOutlineCloudUpload className="w-8 h-8" />
+                        <h2 className="text-center">Upload from device</h2>
+                    </label>
+                )}
             </div>
         </>
-    )
+    );
 }
-export default PhotosUploader
+
+export default PhotosUploader;

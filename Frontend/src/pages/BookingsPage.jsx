@@ -50,7 +50,9 @@ function BookingsPage() {
                                     {booking?.place?.photos.length > 0 && (
                                         <img
                                             className="object-cover w-full h-full"
-                                            src={`${BASE_URL}uploads/${booking?.place?.photos[0]}`}
+                                            // src={`${BASE_URL}uploads/${booking?.place?.photos[0]}`}
+                                            src={booking?.place?.photos[0]}
+                                            onError={(e) => { e.target.src = "/hotel.png"; }}
                                             alt="image"
                                         />
                                     )}

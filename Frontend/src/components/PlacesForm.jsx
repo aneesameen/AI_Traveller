@@ -5,8 +5,11 @@ import AccountNav from "./AccountNav";
 import { Navigate, useParams } from "react-router-dom";
 import axios from "axios";
 import { toast } from "sonner";
+import { sanityClient } from "../../client";
 
 function PlacesForm() {
+
+    const [loading, setLoading] = useState(false);
 
     const { id } = useParams();
 
@@ -23,26 +26,34 @@ function PlacesForm() {
     const [redirect, setRedirect] = useState(false);
     const [confirmDelete, setConfirmDelete] = useState(false);
 
+    const normalizePhotos = (photos) =>
+        photos.map((photo) => ({
+            _id: photo._id || null,
+            url: photo.url || (typeof photo === "string" ? photo : null),
+        }));
 
     useEffect(() => {
-        if (!id) {
-            return;
-        }
-        axios.get("/places/" + id).then(response => {
+        if (!id) return;
+
+        axios.get("/places/" + id).then((response) => {
             const { data } = response;
 
             setTitle(data?.title);
             setAddress(data?.address);
-            setAddedPhotos(data?.photos);
+
+            const normalizedPhotos = normalizePhotos(data?.photos || []);
+            setAddedPhotos(normalizedPhotos);
+
             setDescription(data?.description);
             setPerks(data?.perks);
             setExtraInfo(data?.extraInfo);
             setECheckIn(data?.checkIn);
             setECheckOut(data?.checkOut);
             setMaxGuest(data?.maxGuest);
-            setPrice(data?.price)
-        })
-    }, [id])
+            setPrice(data?.price);
+        });
+    }, [id]);
+
 
     const savePlace = async (ev) => {
         ev.preventDefault();
@@ -52,17 +63,18 @@ function PlacesForm() {
             return;
         }
 
+        // savePin();
 
         if (id) {
             //update an existing place
             await axios.put("/places", {
-                id, title, address, addedPhotos, description, perks, extraInfo, checkIn, checkOut, maxGuest, price
+                id, title, address, addedPhotos: addedPhotos.map(photo => photo.url || photo), description, perks, extraInfo, checkIn, checkOut, maxGuest, price
             });
             setRedirect(true);
         } else {
             //create new place
             await axios.post("/places", {
-                title, address, addedPhotos, description, perks, extraInfo, checkIn, checkOut, maxGuest, price
+                title, address, addedPhotos: addedPhotos.map(photo => photo.url || photo), description, perks, extraInfo, checkIn, checkOut, maxGuest, price
             });
             setRedirect(true);
         }
@@ -81,8 +93,52 @@ function PlacesForm() {
         return <Navigate to={"/account/places"} />
     }
 
+
+    // const savePin = () => {
+    //     if (loading) {
+    //         alert("Please wait until the image is uploaded.");
+    //         return;
+    //     }
+
+    //     const validPhotos = normalizePhotos(addedPhotos).filter(
+    //         (photo) => photo._id && typeof photo._id === "string"
+    //     );
+
+    //     if (validPhotos.length > 0) {
+    //         validPhotos.forEach((photo) => {
+    //             const doc = {
+    //                 _type: "pin",
+    //                 image: {
+    //                     _type: "image",
+    //                     asset: {
+    //                         _type: "reference",
+    //                         _ref: photo._id,
+    //                     },
+    //                 },
+    //                 assetId: photo.url,
+    //             };
+
+    //             sanityClient
+    //                 .create(doc)
+    //                 .then(() => {
+    //                     console.log("Image saved successfully!");
+    //                 })
+    //                 .catch((error) => {
+    //                     console.error("Error saving image:", error.message);
+    //                 });
+    //         });
+    //     } else {
+    //         console.warn("No valid image data available.");
+    //     }
+    // };
+
+
+
+
+
+
     return (
-        <div className="mt-16">
+        <div className="">
             <AccountNav />
             <form onSubmit={savePlace}>
                 {/* --------------title-------------------- */}
@@ -134,47 +190,43 @@ function PlacesForm() {
 
                 {/* ------------------------------house rules-------------------------- */}
                 <h2 className="text-2xl font-medium mt-4 pl-1">House Rules</h2>
-                <div className="grid gap-2">
-                    <div className="grid gap-2 grid-cols-1 md:grid-cols-2">
-                        <div className="border px-4 pb-1 rounded-2xl">
-                            <h3 className="mt-2 mb-2">check-In</h3>
-                            <input className=" border border-gray-400 outline-none px-2 rounded-2xl"
-                                type="time"
-                                value={checkIn}
-                                onChange={ev => setECheckIn(ev.target.value)}
-                            />
-                        </div>
-
-                        <div className="border pb-1 px-4 rounded-2xl">
-                            <h3 className="mt-2 mb-2">check-Out</h3>
-                            <input className=" border border-gray-400 outline-none px-2 rounded-2xl"
-                                type="time"
-                                value={checkOut}
-                                onChange={ev => setECheckOut(ev.target.value)}
-                            />
-                        </div>
+                <div className="grid gap-2 grid-cols-2 lg:grid-cols-4">
+                    <div className="border px-4 pb-1 rounded-2xl">
+                        <h3 className="mt-2 mb-2">check-In</h3>
+                        <input className=" border border-gray-400 outline-none px-2 rounded-2xl"
+                            type="time"
+                            value={checkIn}
+                            onChange={ev => setECheckIn(ev.target.value)}
+                        />
                     </div>
 
-                    <div className="grid gap-2 grid-cols-1 md:grid-cols-2">
-                        <div className="border px-4 pb-2 rounded-2xl">
-                            <h3 className="mt-2 mb-2">Maximum guests</h3>
-                            <input className=" border border-gray-400 outline-none px-2 rounded-2xl"
-                                type="number"
-                                min={1}
-                                value={maxGuest}
-                                onChange={ev => setMaxGuest(ev.target.value)}
-                            />
-                        </div>
+                    <div className="border pb-1 px-4 rounded-2xl">
+                        <h3 className="mt-2 mb-2">check-Out</h3>
+                        <input className=" border border-gray-400 outline-none px-2 rounded-2xl"
+                            type="time"
+                            value={checkOut}
+                            onChange={ev => setECheckOut(ev.target.value)}
+                        />
+                    </div>
 
-                        <div className="border px-4 pb-2 rounded-2xl">
-                            <h3 className="mt-2 mb-2">Price Per Night ₹</h3>
-                            <input className=" border border-gray-400 outline-none px-2 rounded-2xl"
-                                type="number"
-                                min={100}
-                                value={price}
-                                onChange={ev => setPrice(ev.target.value)}
-                            />
-                        </div>
+                    <div className="border px-4 pb-2 rounded-2xl">
+                        <h3 className="mt-2 mb-2">Maximum guests</h3>
+                        <input className=" border border-gray-400 outline-none px-2 rounded-2xl"
+                            type="number"
+                            min={1}
+                            value={maxGuest}
+                            onChange={ev => setMaxGuest(ev.target.value)}
+                        />
+                    </div>
+
+                    <div className="border px-4 pb-2 rounded-2xl">
+                        <h3 className="mt-2 mb-2">Price Per Night ₹</h3>
+                        <input className=" border border-gray-400 outline-none px-2 rounded-2xl"
+                            type="number"
+                            min={100}
+                            value={price}
+                            onChange={ev => setPrice(ev.target.value)}
+                        />
                     </div>
                 </div>
 

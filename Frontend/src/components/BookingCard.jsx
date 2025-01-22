@@ -66,32 +66,6 @@ function BookingCard({ singlePlace }) {
     }
 
 
-    // const reservePlace = async (ev) => {
-
-    //     ev.preventDefault();
-
-    //     if (!checkIn || !checkOut || !noOfGuests || !name || !phoneNo) {
-    //         toast.error("please fill in every detail");
-    //         return;
-    //     }
-
-    //     if (user || luser) {
-    //         try {
-    //             const response = await axios.post("/bookings", {
-    //                 checkIn, checkOut, noOfGuests, name,
-    //                 phoneNo, place: singlePlace._id,
-    //                 price: totalNoOfDays * singlePlace?.price
-    //             });
-    //             const bookingId = response.data._id;
-    //             setRedirect(`/account/bookings/${bookingId}`)
-    //         } catch (error) {
-    //             console.log(error)
-    //         }
-    //     } else {
-    //         toast.error("Please login first")
-    //     }
-    // }
-
     if (redirect) {
         return <Navigate to={redirect} />
     }
@@ -107,6 +81,7 @@ function BookingCard({ singlePlace }) {
                     <div className="py-3 px-4">
                         <label>Check-In:</label>
                         <input type="date"
+                            min={new Date().toISOString().split('T')[0]}
                             value={checkIn}
                             onChange={ev => setCheckIn(ev.target.value)}
                         />
@@ -114,6 +89,7 @@ function BookingCard({ singlePlace }) {
                     <div className="py-3 px-4 border-l">
                         <label>Check-Out:</label>
                         <input type="date"
+                            min={new Date().toISOString().split('T')[0]}
                             value={checkOut}
                             onChange={ev => setCheckOut(ev.target.value)}
                         />
