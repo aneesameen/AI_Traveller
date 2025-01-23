@@ -53,7 +53,7 @@ function Header() {
                 <div className="relative cursor-pointer">
                     <div
                         onClick={openDialog}
-                        className="flex items-center gap-2 border border-gray-300 rounded-full py-2 px-4 profile-button">
+                        className="flex items-center gap-2 border border-gray-300 rounded-full py-1 px-3 md:py-2 md:px-4 profile-button">
 
                         <RxHamburgerMenu className="h-5 w-5" />
                         <div >
@@ -67,6 +67,7 @@ function Header() {
                                 </div>
                             }
                         </div>
+
                         {!!(user || luser) && (
                             <div className="flex font-medium capitalize">
                                 {user?.name || luser?.name}

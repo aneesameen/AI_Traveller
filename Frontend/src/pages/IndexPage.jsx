@@ -54,7 +54,7 @@ function IndexPage() {
 
     return (
         <div className="mt-16 mb-16 gap-x-6 gap-y-8 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
-            {allData?.length > 0 && allData.map(place => (
+            {allData?.length > 0 ? allData.map(place => (
                 <Link to={`/place/${place?._id}`} key={place._id} className="hover:scale-105 duration-200 cursor-pointer">
                     <div className="bg-gray-500 mb-2 rounded-2xl flex">
                         {place?.photos?.[0] && (
@@ -68,7 +68,12 @@ function IndexPage() {
                         <span className="font-medium">₹{place?.price}/night</span>
                     </div>
                 </Link>
-            ))}
+            ))
+                : [1, 2, 3, 4, 5, 6, 7, 8].map((item, index) => (
+                    <div key={index} className="h-[180px] md:h-[250px] lg:h-[300px] w-full bg-slate-200 animate-pulse rounded-xl">
+                    </div>
+                ))
+            }
         </div>
     )
 }

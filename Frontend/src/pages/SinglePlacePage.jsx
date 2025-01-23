@@ -5,6 +5,7 @@ import { FiMapPin } from "react-icons/fi";
 import { SlUser } from "react-icons/sl";
 import BookingCard from "../components/BookingCard";
 import PhotoGallery from "../components/PhotoGallery";
+import LoadingScreen from "../components/LoadingScreen";
 
 function SinglePlacePage() {
 
@@ -25,7 +26,11 @@ function SinglePlacePage() {
         }
     }, [id]);
 
-    if (!singlePlace) return "";
+    if (!singlePlace) {
+        return (
+            <LoadingScreen />
+        )
+    }
 
 
 
@@ -44,7 +49,7 @@ function SinglePlacePage() {
             <div className="mt-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-[2fr_1fr]">
                 <div>
                     {/* <h2 className="font-medium capitalize">Hosted By : {singlePlace?.owner?.name}</h2> */}
-                    <div className="flex flex-wrap gap-3 items-center ">
+                    <div className="text-md md:text-2xl flex flex-wrap gap-3 items-center">
                         <SlUser className="text-2xl" />
                         <h1 className="font-medium text-2xl">Hosted By : </h1>
                         <div className="flex flex-wrap items-center gap-2">

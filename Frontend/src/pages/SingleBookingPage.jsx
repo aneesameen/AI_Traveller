@@ -68,12 +68,14 @@ function SingleBookingPage() {
                             </div>
                         </div>
                     </div>
-                    <div className="mx-auto border-t border-gray-300">
-                        <div className="font-medium mt-4">Total Price</div>
-                        <div className="text-xl font-medium">₹ {booking?.price}</div>
-                    </div>
-                    <div className="mx-auto mt-4">
-                        <button onClick={() => setConfirmDelete(true)} className="secondary">Cancel Booking</button>
+                    <div className="flex items-center justify-between">
+                        <div className="border-gray-300">
+                            <div className="font-medium mt-4">Total Price</div>
+                            <div className="text-xl font-medium">₹ {booking?.price}</div>
+                        </div>
+                        <div className="mt-4">
+                            <button onClick={() => setConfirmDelete(true)} className="secondary">Cancel Booking</button>
+                        </div>
                     </div>
 
                     {confirmDelete && (
