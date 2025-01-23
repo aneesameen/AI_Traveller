@@ -50,10 +50,10 @@ function SinglePlacePage() {
                 <div>
                     {/* <h2 className="font-medium capitalize">Hosted By : {singlePlace?.owner?.name}</h2> */}
                     <div className="text-md md:text-2xl flex flex-wrap gap-3 items-center">
-                        <SlUser className="text-2xl" />
-                        <h1 className="font-medium text-2xl">Hosted By : </h1>
+                        <SlUser />
+                        <h1 className="font-medium">Hosted By : </h1>
                         <div className="flex flex-wrap items-center gap-2">
-                            <h2 className="capitalize font-medium text-2xl">
+                            <h2 className="capitalize font-medium">
                                 {singlePlace?.owner?.name}
                             </h2>
                         </div>
