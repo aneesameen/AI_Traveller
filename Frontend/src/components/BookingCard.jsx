@@ -15,6 +15,7 @@ function BookingCard({ singlePlace }) {
     const [name, setName] = useState("");
     const [phoneNo, setPhoneNo] = useState("");
     const [redirect, setRedirect] = useState("");
+    const [loading, setLoading] = useState(false);
 
     const { user, luser } = useContext(UserContext);
 
@@ -39,6 +40,8 @@ function BookingCard({ singlePlace }) {
             return;
         }
 
+        setLoading(true);
+
         if (user || luser) {
             try {
                 const totalAmount = totalNoOfDays * singlePlace?.price;
@@ -55,13 +58,16 @@ function BookingCard({ singlePlace }) {
                 });
 
                 window.location.href = data.url;
+                setLoading(false);
 
             } catch (error) {
                 console.error(error);
                 toast.error("Error while processing payment. Please try again.");
+                setLoading(false);
             }
         } else {
             toast.error("Please login first");
+            setLoading(false);
         }
     }
 
@@ -134,14 +140,20 @@ function BookingCard({ singlePlace }) {
                     </div>
                 )}
             </div>
-            <button onClick={bookPlace} className="primary mt-4 flex justify-center gap-8">
-                Book Now
-                {totalNoOfDays > 0 && (
-                    <>
-                        <span> ₹{totalNoOfDays * singlePlace?.price}</span>
-                    </>
-                )}
-            </button>
+            {loading ? (
+                <button className="primary mt-4 flex justify-center gap-8">
+                    <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-white"></div>
+                </button>
+            ) : (
+                <button onClick={bookPlace} className="primary mt-4 flex justify-center gap-8">
+                    Book Now
+                    {totalNoOfDays > 0 && (
+                        <>
+                            <span> ₹{totalNoOfDays * singlePlace?.price}</span>
+                        </>
+                    )}
+                </button>
+            )}
         </div>
     )
 }

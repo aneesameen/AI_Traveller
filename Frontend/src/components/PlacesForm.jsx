@@ -65,18 +65,22 @@ function PlacesForm() {
 
         // savePin();
 
+        setLoading(true);
+
         if (id) {
             //update an existing place
             await axios.put("/places", {
                 id, title, address, addedPhotos: addedPhotos.map(photo => photo.url || photo), description, perks, extraInfo, checkIn, checkOut, maxGuest, price
             });
             setRedirect(true);
+            setLoading(false);
         } else {
             //create new place
             await axios.post("/places", {
                 title, address, addedPhotos: addedPhotos.map(photo => photo.url || photo), description, perks, extraInfo, checkIn, checkOut, maxGuest, price
             });
             setRedirect(true);
+            setLoading(false);
         }
     }
 
@@ -190,7 +194,7 @@ function PlacesForm() {
 
                 {/* ------------------------------house rules-------------------------- */}
                 <h2 className="text-2xl font-medium mt-4 pl-1">House Rules</h2>
-                <div className="grid gap-2 grid-cols-2 lg:grid-cols-4">
+                <div className="grid gap-2 grid-cols-1 md:grid-cols-2 lg:grid-cols-4">
                     <div className="border px-4 pb-1 rounded-2xl">
                         <h3 className="mt-2 mb-2">check-In</h3>
                         <input className=" border border-gray-400 outline-none px-2 rounded-2xl"
@@ -241,10 +245,16 @@ function PlacesForm() {
                         >
                             Delete
                         </button>
-
-
                     )}
-                    <button className="primary mt-8 mb-4 max-w-52">Save</button>
+
+                    {loading ? (
+                        <button className="primary mt-8 mb-4 max-w-52 flex justify-center">
+                            <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-white"></div>
+                        </button>
+                    ) : (
+                        <button className="primary mt-8 mb-4 max-w-52">Save</button>
+                    )}
+
                 </div>
             </form>
             {confirmDelete && (

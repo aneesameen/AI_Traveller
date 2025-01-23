@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { BASE_URL } from "../Constants";
 import { MdOutlineGridView } from "react-icons/md";
 import { IoIosCloseCircleOutline } from "react-icons/io";
+import { Link } from "react-router-dom";
 
 function PhotoGallery({ singlePlace }) {
     const [showAllPics, setShowAllPics] = useState(false);
@@ -33,7 +34,7 @@ function PhotoGallery({ singlePlace }) {
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 p-6">
                     {singlePlace?.photos?.map((pic, index) => (
-                        <div key={index} className="w-full h-64 md:h-80 lg:h-96">
+                        <Link to={pic} target="_blank" key={index} className="w-full h-64 md:h-80 lg:h-96">
                             <img
                                 className="w-full h-full object-cover rounded-md shadow-md"
                                 // src={`${BASE_URL}uploads/${pic}`}
@@ -41,7 +42,7 @@ function PhotoGallery({ singlePlace }) {
                                 alt={`Photo ${index + 1}`}
                                 onError={(e) => { e.target.src = "/hotel.png"; }}
                             />
-                        </div>
+                        </Link>
                     ))}
                 </div>
             </div>

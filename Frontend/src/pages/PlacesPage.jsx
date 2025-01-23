@@ -57,7 +57,7 @@ function PlacesPage() {
             ) : (
                 <div className="mt-8 grid lg:grid-cols-2 gap-4">
                     {places.length > 0 && places.map(place => (
-                        <Link to={`/account/places/${place._id}`} className="flex cursor-pointer gap-4 bg-gray-300 hover:-translate-y-2 transition duration-500 ease-in-out p-1 rounded-2xl" key={place}>
+                        <Link to={`/account/places/${place._id}`} className="flex cursor-pointer gap-4 bg-gray-300 hover:-translate-y-2 transition duration-500 ease-in-out p-1 rounded-2xl" key={place._id}>
                             <div className=" flex w-32 h-full bg-gray-300 rounded-2xl shrink-0">
                                 {place.photos.length > 0 && (
                                     // <img className="object-cover rounded-2xl" src={`${BASE_URL}uploads/` + place?.photos[0]} alt="image" />

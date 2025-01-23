@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom"
+import { Link, Navigate } from "react-router-dom"
 import axios from "axios";
 import { useState } from "react";
 import { toast } from "sonner";
@@ -9,6 +9,7 @@ function Register() {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [loading, setLoading] = useState(false);
+    const [redirect, setRedirct] = useState(false);
 
 
     const registerUser = async (ev) => {
@@ -25,6 +26,7 @@ function Register() {
                 });
                 toast("Registration Successfull. Please Login")
                 setLoading(false);
+                setRedirct(true);
             } catch (e) {
                 toast.error("Registration failed. Please try again later");
                 setLoading(false);
@@ -33,6 +35,10 @@ function Register() {
         setName("");
         setEmail("")
         setPassword("");
+    }
+
+    if (redirect) {
+        return <Navigate to={"/login"} />
     }
 
     return (
