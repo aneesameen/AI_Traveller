@@ -12,6 +12,11 @@ function SinglePlacePage() {
     const { id } = useParams();
 
     const [singlePlace, setSinglePlace] = useState("");
+    const [readMore, setReadMore] = useState(false);
+
+    const toggleReadMore = () => {
+        setReadMore(!readMore);
+    }
 
     useEffect(() => {
         if (!id) {
@@ -48,7 +53,6 @@ function SinglePlacePage() {
 
             <div className="mt-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-[2fr_1fr]">
                 <div>
-                    {/* <h2 className="font-medium capitalize">Hosted By : {singlePlace?.owner?.name}</h2> */}
                     <div className="text-md md:text-2xl flex flex-wrap gap-3 items-center">
                         <SlUser />
                         <h1 className="font-medium">Hosted By : </h1>
@@ -63,8 +67,12 @@ function SinglePlacePage() {
 
                     <div className="">
                         <h2 className="font-semibold text-2xl mb-4">Description</h2>
-                        <h2>{singlePlace?.description}</h2>
+                        <h2 className={`${readMore ? "line-clamp-none" : "line-clamp-[10]"}`}>{singlePlace?.description}</h2>
+                        <h1 onClick={toggleReadMore} className="text-primary flex mr-5 justify-end cursor-pointer">
+                            {readMore ? "Read Less" : "Read More"}
+                        </h1>
                     </div>
+
                     <hr className="border border-gray-300 my-6" />
                     <div className="flex flex-wrap justify-between items-center">
                         <div>

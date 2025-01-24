@@ -6,6 +6,7 @@ import { FiMapPin } from "react-icons/fi";
 import PhotoGallery from "../components/PhotoGallery";
 import { differenceInCalendarDays, format } from "date-fns";
 import { SlCalender } from "react-icons/sl";
+import LoadingScreen from "../components/LoadingScreen";
 
 function SingleBookingPage() {
 
@@ -35,7 +36,9 @@ function SingleBookingPage() {
     }
 
     if (!booking) {
-        return "";
+        return (
+            <LoadingScreen />
+        )
     }
 
     if (redirect) {

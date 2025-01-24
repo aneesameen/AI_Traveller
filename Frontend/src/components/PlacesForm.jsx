@@ -236,7 +236,7 @@ function PlacesForm() {
 
 
                 {/* -------------------------------------button------------------------------- */}
-                <div className="flex items-center font-medium justify-around">
+                <div className="flex items-center justify-center font-medium md:justify-around gap-5">
                     {id && (
                         <button
                             type="button"

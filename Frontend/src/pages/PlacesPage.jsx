@@ -30,7 +30,7 @@ function PlacesPage() {
                     </Link>
                 </div>
 
-                <div className="text-2xl font-semibold items-center justify-center flex flex-col gap-5 mt-20">
+                <div className="text-2xl text-center font-semibold items-center justify-center flex flex-col gap-5 mt-20">
                     You did not add any accomodations yet !
                     <ImSad className="text-5xl" />
                 </div>
