@@ -37,22 +37,6 @@ router.post("/places", (req, res) => {
     });
 });
 
-// router.post("/places", (req, res) => {
-//     const { token } = req.cookies;
-//     const {
-//         title, address, addedPhotos, description,
-//         perks, extraInfo, checkIn, checkOut, maxGuest, price
-//     } = req.body;
-//     jwt.verify(token, jwtSecret, {}, async (err, userData) => {
-//         if (err) throw err;
-//         const placeDoc = await Place.create({
-//             owner: userData.id,
-//             title, address, photos: addedPhotos, description,
-//             perks, extraInfo, checkIn, checkOut, maxGuest, price
-//         });
-//         res.json(placeDoc);
-//     })
-// })
 
 
 // -----------------------Get all places of one user-----------------
@@ -61,18 +45,15 @@ router.post("/places", (req, res) => {
 router.get("/user-places", (req, res) => {
     const { token } = req.cookies;
 
-    // Check if token exists
     if (!token) {
         return res.status(401).json({ message: "Token is required" });
     }
 
-    // Verify the token
     jwt.verify(token, jwtSecret, {}, async (err, userData) => {
         if (err) {
             return res.status(403).json({ message: "Invalid or expired token" });
         }
 
-        // Check if userData is valid
         if (!userData || !userData.id) {
             return res.status(403).json({ message: "Invalid token, user data not found" });
         }
@@ -80,7 +61,6 @@ router.get("/user-places", (req, res) => {
         const { id } = userData;
 
         try {
-            // Fetch places owned by the user
             const userPlaces = await Place.find({ owner: id });
             return res.json(userPlaces);
         } catch (err) {
@@ -89,23 +69,6 @@ router.get("/user-places", (req, res) => {
     });
 });
 
-
-
-// router.get("/user-places", (req, res) => {
-//     const { token } = req.cookies;
-//     jwt.verify(token, jwtSecret, {}, async (err, userData) => {
-//         const { id } = userData;
-//         res.json(await Place.find({ owner: id }))
-//     })
-// })
-
-
-// --------------------demo--------------------
-
-// router.get("/places/:id", async (req, res) => {
-//     const { id } = req.params;
-//     res.json(await Place.findById(id))
-// })
 
 // --------------------------------------Get one place of this id------------------
 
@@ -154,7 +117,6 @@ router.put("/places", async (req, res) => {
                 return res.status(403).json({ error: "Unauthorized to update this place" });
             }
 
-            // Update the place details
             placeDoc.set({
                 title, address, photos: addedPhotos, description,
                 perks, extraInfo, checkIn, checkOut, maxGuest, price
@@ -168,27 +130,6 @@ router.put("/places", async (req, res) => {
         }
     });
 });
-
-
-// router.put("/places", async (req, res) => {
-//     const { token } = req.cookies;
-//     const {
-//         id, title, address, addedPhotos, description,
-//         perks, extraInfo, checkIn, checkOut, maxGuest, price
-//     } = req.body;
-//     jwt.verify(token, jwtSecret, {}, async (err, userData) => {
-//         if (err) throw err;
-//         const placeDoc = await Place.findById(id);
-//         if (userData.id === placeDoc.owner.toString()) {
-//             placeDoc.set({
-//                 title, address, photos: addedPhotos, description,
-//                 perks, extraInfo, checkIn, checkOut, maxGuest, price
-//             })
-//             await placeDoc.save()
-//             res.json("ok");
-//         }
-//     })
-// })
 
 
 // -----------------------Delete the place of this id-----------------

@@ -30,26 +30,14 @@ function InfoSection({ trip, deleteTrip, confirmDelete, setConfirmDelete }) {
             const resp = await GetPlaceDetails(data);
 
             if (resp?.places?.[0]?.photos?.length) {
-                // Map through the first 10 photos
                 const photoUrls = resp.places[0].photos.slice(0, 9).map((photo) => {
                     return PHOTO_REF_URL.replace("{NAME}", photo.name);
                 });
-
-                // Set the photos in the state
                 setPhoto(photoUrls);
             } else {
                 console.error("No valid photo data found in response.");
                 setPhoto(["/placeholder.jpg"]);
             }
-
-
-            // if (resp?.places?.[0]?.photos?.[9]?.name) {
-            //     const photoUrl = PHOTO_REF_URL.replace('{NAME}', resp.places[0].photos[5].name);
-            //     setPhoto(photoUrl);
-            // } else {
-            //     console.error("No photo found for the place");
-            //     setPhoto("/placeholder.jpg");
-            // }
 
         } catch (error) {
             console.error("Error in getPlacePhoto:", error);
