@@ -14,7 +14,7 @@ router.post('/create-checkout-session', async (req, res) => {
             line_items: [
                 {
                     price_data: {
-                        currency: 'usd',
+                        currency: 'inr',
                         product_data: {
                             name: `Booking for Place ${placeName}`,
                             description: `Stay from ${checkIn} to ${checkOut} for ${noOfGuests} guests.`,
