@@ -1,7 +1,7 @@
 const express = require("express");
 const cors = require('cors');
 const authRoute = require("./routes/auth.js");
-const uploadphoto = require("./routes/UploadByLink.js");
+// const uploadphoto = require("./routes/UploadByLink.js");
 const newplace = require("./routes/Place.js");
 const booking = require("./routes/Booking.js");
 const stripe = require("./routes/Stripe.js");
@@ -23,7 +23,10 @@ const app = express();
 app.use(cors({
     credentials: true,
     // origin: 'http://localhost:5173',
-    origin: BASE_URL,
+    origin: [
+        '',
+        process.env.BASE_URL
+    ],
 }));
 app.use(express.json());
 app.use(cookieParser());
@@ -140,7 +143,7 @@ app.post("/api/places", async (req, res) => {
 
 
 app.use(authRoute);
-app.use(uploadphoto);
+// app.use(uploadphoto);
 app.use(newplace);
 app.use(booking);
 app.use(stripe);
