@@ -1,13 +1,15 @@
 import { useContext, useEffect, useState } from "react";
 import { differenceInCalendarDays } from "date-fns";
 import axios from "axios";
-import { Navigate } from "react-router-dom"
+import { Navigate, useNavigate } from "react-router-dom"
 import { UserContext } from "../context/UserContext";
 import { toast } from "sonner";
 import { BASE_URL } from "../Constants";
 
 
 function BookingCard({ singlePlace }) {
+
+    const navigate = useNavigate();
 
     const [checkIn, setCheckIn] = useState("");
     const [checkOut, setCheckOut] = useState("");
@@ -33,10 +35,15 @@ function BookingCard({ singlePlace }) {
 
 
 
-    const bookPlace = async () => {
 
+    const bookPlace = async () => {
         if (!checkIn || !checkOut || !noOfGuests || !name || !phoneNo) {
             toast.error("Please fill in every detail");
+            return;
+        }
+
+        if (phoneNo.length !== 10) {
+            toast.error("invalid phone no.")
             return;
         }
 
@@ -46,30 +53,99 @@ function BookingCard({ singlePlace }) {
             try {
                 const totalAmount = totalNoOfDays * singlePlace?.price;
 
-                const { data } = await axios.post("/create-checkout-session", {
-                    checkIn,
-                    checkOut,
-                    noOfGuests,
-                    name,
-                    phoneNo,
-                    place: singlePlace._id,
-                    placeName: singlePlace?.title,
-                    totalAmount,
-                });
+                const { data } = await axios.post("/create-order", { totalAmount });
 
-                window.location.href = data.url;
-                setLoading(false);
+                const options = {
+                    key: "rzp_test_mWaBYCWHNbBLUr",
+                    amount: data.amount,
+                    currency: "INR",
+                    name: "Traveller",
+                    description: `Booking for ${singlePlace?.title}`,
+                    order_id: data.id,
+                    handler: async function (response) {
+                        const verify = await axios.post("/verify-payment", {
+                            razorpay_payment_id: response.razorpay_payment_id,
+                            razorpay_order_id: response.razorpay_order_id,
+                            razorpay_signature: response.razorpay_signature,
+                            bookingDetails: {
+                                checkIn,
+                                checkOut,
+                                noOfGuests,
+                                name,
+                                phoneNo,
+                                place: singlePlace._id,
+                                placeName: singlePlace?.title,
+                                totalAmount,
+                            },
+                        });
+
+                        if (verify.data.success) {
+                            toast.success("Booking successful!");
+                            navigate("/account/bookings/success");
+                        } else {
+                            toast.error("Payment verification failed!");
+                        }
+                    },
+                    prefill: {
+                        name: user?.name || name,
+                        email: user?.email || "guest@example.com",
+                        contact: phoneNo,
+                    },
+                    theme: { color: "#008080" },
+                };
+
+                const razorpay = new window.Razorpay(options);
+                razorpay.open();
 
             } catch (error) {
                 console.error(error);
                 toast.error("Error while processing payment. Please try again.");
+            } finally {
                 setLoading(false);
             }
         } else {
             toast.error("Please login first");
-            setLoading(false);
         }
-    }
+    };
+
+
+    // const bookPlace = async () => {
+
+    //     if (!checkIn || !checkOut || !noOfGuests || !name || !phoneNo) {
+    //         toast.error("Please fill in every detail");
+    //         return;
+    //     }
+
+    //     setLoading(true);
+
+    //     if (user || luser) {
+    //         try {
+    //             const totalAmount = totalNoOfDays * singlePlace?.price;
+
+    //             const { data } = await axios.post("/create-checkout-session", {
+    //                 checkIn,
+    //                 checkOut,
+    //                 noOfGuests,
+    //                 name,
+    //                 phoneNo,
+    //                 place: singlePlace._id,
+    //                 placeName: singlePlace?.title,
+    //                 totalAmount,
+    //             });
+
+    //             window.location.href = data.url;
+    //             setLoading(false);
+
+    //         } catch (error) {
+    //             console.error(error);
+    //             toast.error("Error while processing payment. Please try again.");
+    //             setLoading(false);
+    //         }
+    //     } else {
+    //         toast.error("Please login first");
+    //         setLoading(false);
+    //     }
+    // }
 
 
     if (redirect) {
@@ -120,12 +196,22 @@ function BookingCard({ singlePlace }) {
                                 onChange={ev => setName(ev.target.value)}
                             />
                             <label>Phone No:</label>
-                            <input className="outline-none border px-2 rounded-2xl ml-2 capitalize"
+                            <input
+                                className="outline-none border px-2 rounded-2xl ml-2 capitalize"
                                 type="tel"
                                 value={phoneNo}
                                 placeholder="9797xxxxxx"
-                                onChange={ev => setPhoneNo(ev.target.value)}
+                                onChange={ev => {
+                                    const input = ev.target.value.replace(/\D/g, '');
+                                    if (input.length <= 10) {
+                                        setPhoneNo(input);
+                                    } else {
+                                        toast.error("Invalid Phone No.")
+                                    }
+                                }}
+                                maxLength={10}
                             />
+
                         </div>
                         <div className="py-3 px-4 flex flex-col gap-2">
                             <div className="flex items-center justify-between">

@@ -4,7 +4,8 @@ const authRoute = require("./routes/auth.js");
 // const uploadphoto = require("./routes/UploadByLink.js");
 const newplace = require("./routes/Place.js");
 const booking = require("./routes/Booking.js");
-const stripe = require("./routes/Stripe.js");
+const comment = require("./routes/Comment.js");
+const razorpay = require("./routes/Razorpay.js");
 const { default: mongoose } = require("mongoose");
 const cookieParser = require("cookie-parser");
 require('dotenv').config()
@@ -146,7 +147,8 @@ app.use(authRoute);
 // app.use(uploadphoto);
 app.use(newplace);
 app.use(booking);
-app.use(stripe);
+app.use(comment);
+app.use(razorpay);
 
 
 

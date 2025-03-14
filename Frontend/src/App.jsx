@@ -20,9 +20,9 @@ import MyTrips from './pages/MyTrips';
 import Success from './components/Success';
 
 
-// axios.defaults.baseURL = 'http://localhost:4000';
+axios.defaults.baseURL = 'http://localhost:4000';
 // axios.defaults.baseURL = 'https://ai-traveller-backend.onrender.com';
-axios.defaults.baseURL = 'https://ai-traveller-backend.vercel.app';
+// axios.defaults.baseURL = 'https://ai-traveller-backend.vercel.app';
 axios.defaults.withCredentials = true;
 
 function App() {

@@ -6,6 +6,7 @@ import { SlUser } from "react-icons/sl";
 import BookingCard from "../components/BookingCard";
 import PhotoGallery from "../components/PhotoGallery";
 import LoadingScreen from "../components/LoadingScreen";
+import Comments from "../components/Comments";
 
 function SinglePlacePage() {
 
@@ -107,6 +108,10 @@ function SinglePlacePage() {
             </div>
             <div className="text-sm text-gray-800 mb-4 mt-2">
                 {singlePlace?.extraInfo}
+            </div>
+
+            <div>
+                <Comments />
             </div>
 
         </div >
