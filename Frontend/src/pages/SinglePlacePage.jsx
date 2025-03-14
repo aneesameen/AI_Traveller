@@ -7,6 +7,7 @@ import BookingCard from "../components/BookingCard";
 import PhotoGallery from "../components/PhotoGallery";
 import LoadingScreen from "../components/LoadingScreen";
 import Comments from "../components/Comments";
+import { formatDistanceToNow } from "date-fns";
 
 function SinglePlacePage() {
 
