@@ -76,7 +76,7 @@ router.get("/user-places", (req, res) => {
 router.get("/places/:id", async (req, res) => {
     const { id } = req.params;
     try {
-        const place = await Place.findById(id).populate('owner', 'name email',);
+        const place = await Place.findById(id).populate('owner', 'name email picture',);
         if (!place) {
             return res.status(404).json({ message: "Place not found" });
         }
