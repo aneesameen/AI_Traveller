@@ -38,7 +38,11 @@ const placeSchema = new mongoose.Schema({
     price: {
         type: Number,
     }
-});
+},
+    {
+        timestamps: true,
+    }
+);
 
 const PlaceModel = mongoose.model("Place", placeSchema);
 

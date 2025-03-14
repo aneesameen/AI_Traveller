@@ -54,13 +54,27 @@ function SinglePlacePage() {
 
             <div className="mt-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-[2fr_1fr]">
                 <div>
-                    <div className="text-md md:text-2xl flex flex-wrap gap-3 items-center">
-                        <SlUser />
-                        <h1 className="font-medium">Hosted By : </h1>
-                        <div className="flex flex-wrap items-center gap-2">
-                            <h2 className="capitalize font-medium">
-                                {singlePlace?.owner?.name}
-                            </h2>
+                    <div className="text-md md:text-2xl flex flex-wrap gap-3 items-center ">
+                        {singlePlace?.owner.picture ? (
+                            <img className="w-10 h- rounded-full" src={singlePlace?.owner.picture} alt="img" />
+                        ) : (
+                            <SlUser className="" />
+                        )}
+                        <div>
+                            <div className="flex flex-wrap items-center gap-2">
+                                <h1 className="font-medium">Hosted By : </h1>
+                                <h2 className="capitalize font-medium">
+                                    {singlePlace?.owner?.name}
+                                </h2>
+                            </div>
+                            <div>
+                                <p className="text-sm">{singlePlace?.updatedAt
+                                    ?
+                                    formatDistanceToNow(new Date(singlePlace?.updatedAt), { addSuffix: true, })
+                                    :
+                                    ""
+                                }</p>
+                            </div>
                         </div>
                     </div>
 
