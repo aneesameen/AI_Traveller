@@ -2,66 +2,70 @@ const express = require("express");
 const Razorpay = require("razorpay");
 const jwt = require("jsonwebtoken");
 const Booking = require("../models/Booking.js");
-const jwtSecret = 'hjwdj$jhgjvgg54e6rgvjh68';
+const jwtSecret = "hjwdj$jhgjvgg54e6rgvjh68";
 const crypto = require("crypto");
 const router = express.Router();
 const sendMail = require("../mailer.js");
+const { sendSMS } = require("../sms.js");
 
 const razorpay = new Razorpay({
-    key_id: "rzp_test_mWaBYCWHNbBLUr",
-    key_secret: "KKXAQbsEJdMhgzMMarWzyJQt",
+  key_id: "rzp_test_mWaBYCWHNbBLUr",
+  key_secret: "KKXAQbsEJdMhgzMMarWzyJQt",
 });
 
 router.post("/create-order", async (req, res) => {
-    try {
-        const { totalAmount } = req.body;
+  try {
+    const { totalAmount } = req.body;
 
-        const options = {
-            amount: totalAmount * 100,
-            currency: "INR",
-            receipt: "receipt#" + Math.random(),
-            payment_capture: 1,
-        };
+    const options = {
+      amount: totalAmount * 100,
+      currency: "INR",
+      receipt: "receipt#" + Math.random(),
+      payment_capture: 1,
+    };
 
-        const order = await razorpay.orders.create(options);
-        res.json(order);
-    } catch (error) {
-        res.status(500).json({ error: "Error creating Razorpay order" });
-    }
+    const order = await razorpay.orders.create(options);
+    res.json(order);
+  } catch (error) {
+    res.status(500).json({ error: "Error creating Razorpay order" });
+  }
 });
 
-
-
 router.post("/verify-payment", async (req, res) => {
-    try {
-        const { razorpay_payment_id, razorpay_order_id, razorpay_signature, bookingDetails } = req.body;
+  try {
+    const {
+      razorpay_payment_id,
+      razorpay_order_id,
+      razorpay_signature,
+      bookingDetails,
+    } = req.body;
 
-        const generated_signature = crypto
-            .createHmac("sha256", "KKXAQbsEJdMhgzMMarWzyJQt")
-            .update(razorpay_order_id + "|" + razorpay_payment_id)
-            .digest("hex");
+    const generated_signature = crypto
+      .createHmac("sha256", "KKXAQbsEJdMhgzMMarWzyJQt")
+      .update(razorpay_order_id + "|" + razorpay_payment_id)
+      .digest("hex");
 
-        if (generated_signature === razorpay_signature) {
+    if (generated_signature === razorpay_signature) {
+      const token = req.cookies.token;
 
-            const token = req.cookies.token;
+      jwt.verify(token, jwtSecret, {}, async (err, userData) => {
+        if (err) return res.status(401).json({ error: "Unauthorized" });
 
-            jwt.verify(token, jwtSecret, {}, async (err, userData) => {
-                if (err) return res.status(401).json({ error: "Unauthorized" });
+        const booking = await Booking.create({
+          owner: userData.id,
+          place: bookingDetails.place,
+          checkIn: bookingDetails.checkIn,
+          checkOut: bookingDetails.checkOut,
+          noOfGuests: bookingDetails.noOfGuests,
+          name: bookingDetails.name,
+          phoneNo: bookingDetails.phoneNo,
+          price: bookingDetails.totalAmount,
+          placeName: bookingDetails.placeName,
+        });
 
-                const booking = await Booking.create({
-                    owner: userData.id,
-                    place: bookingDetails.place,
-                    checkIn: bookingDetails.checkIn,
-                    checkOut: bookingDetails.checkOut,
-                    noOfGuests: bookingDetails.noOfGuests,
-                    name: bookingDetails.name,
-                    phoneNo: bookingDetails.phoneNo,
-                    price: bookingDetails.totalAmount,
-                    placeName: bookingDetails.placeName
-                });
-
-                const emailSubject = "Booking Confirmation";
-                const emailMessage = `
+        if (bookingDetails.wantEmail) {
+          const emailSubject = "Booking Confirmation";
+          const emailMessage = `
                 <p>Dear <strong>${bookingDetails.name}</strong>,</p>
     
                 <p>We’re delighted to confirm your booking at <strong>${bookingDetails.placeName}</strong>. Get ready for a relaxing and unforgettable experience with us.</p>
@@ -84,37 +88,25 @@ router.post("/verify-payment", async (req, res) => {
                 📞 <a href="tel:+9797788252">9797788252</a></p>
             `;
 
-                await sendMail(userData.email, emailSubject, emailMessage);
-
-                res.json({ success: true, booking });
-            });
-        } else {
-            res.status(400).json({ error: "Invalid payment signature" });
+          await sendMail(userData.email, emailSubject, emailMessage);
         }
-    } catch (error) {
-        res.status(500).json({ error: "Error verifying payment" });
+
+        if (bookingDetails.wantSMS) {
+          const smsMessage = `Booking confirmed for ${bookingDetails.placeName}. Check-in: ${bookingDetails.checkIn}, Check-out: ${bookingDetails.checkOut}. Amount: Rs.${bookingDetails.totalAmount}. -TRAVELLER`;
+          await sendSMS(bookingDetails.phoneNo, smsMessage);
+        }
+
+        res.json({ success: true, booking });
+      });
+    } else {
+      res.status(400).json({ error: "Invalid payment signature" });
     }
+  } catch (error) {
+    res.status(500).json({ error: "Error verifying payment" });
+  }
 });
 
-
-
 module.exports = router;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 // const express = require('express');
 // const Stripe = require('stripe');
@@ -165,6 +157,5 @@ module.exports = router;
 //         res.status(500).send('Internal Server Error');
 //     }
 // });
-
 
 // module.exports = router;
