@@ -91,10 +91,10 @@ router.post("/verify-payment", async (req, res) => {
           await sendMail(userData.email, emailSubject, emailMessage);
         }
 
-        if (bookingDetails.wantSMS) {
-          const smsMessage = `Booking confirmed for ${bookingDetails.placeName}. Check-in: ${bookingDetails.checkIn}, Check-out: ${bookingDetails.checkOut}. Amount: Rs.${bookingDetails.totalAmount}. -TRAVELLER`;
-          await sendSMS(bookingDetails.phoneNo, smsMessage);
-        }
+        // if (bookingDetails.wantSMS) {
+        //   const smsMessage = `Booking confirmed for ${bookingDetails.placeName}. Check-in: ${bookingDetails.checkIn}, Check-out: ${bookingDetails.checkOut}. Amount: Rs.${bookingDetails.totalAmount}. -TRAVELLER`;
+        //   await sendSMS(bookingDetails.phoneNo, smsMessage);
+        // }
 
         res.json({ success: true, booking });
       });
