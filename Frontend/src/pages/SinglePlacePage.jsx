@@ -28,7 +28,7 @@ function SinglePlacePage() {
       axios.get(`/places/${id}`).then((response) => {
         setSinglePlace(response.data);
       });
-    } catch (error) {}
+    } catch (error) { }
   }, [id]);
 
   if (!singlePlace) {
@@ -72,8 +72,8 @@ function SinglePlacePage() {
                 <p className="text-sm">
                   {singlePlace?.updatedAt
                     ? formatDistanceToNow(new Date(singlePlace?.updatedAt), {
-                        addSuffix: true,
-                      })
+                      addSuffix: true,
+                    })
                     : ""}
                 </p>
               </div>
@@ -84,11 +84,12 @@ function SinglePlacePage() {
 
           <div className="">
             <h2 className="font-semibold text-2xl mb-4">Description</h2>
-            <h2
-              className={`${readMore ? "line-clamp-none" : "line-clamp-[10]"}`}
+            <p
+              className={`${readMore ? "line-clamp-none" : "line-clamp-[10]"
+                } text-justify mr-2`}
             >
               {singlePlace?.description}
-            </h2>
+            </p>
             <h1
               onClick={toggleReadMore}
               className="text-primary flex mr-5 justify-end cursor-pointer"
@@ -131,7 +132,7 @@ function SinglePlacePage() {
       <div>
         <h2 className="font-semibold text-2xl mt-4">Extra Info</h2>
       </div>
-      <div className="text-sm text-gray-800 mb-4 mt-2">
+      <div className="text-sm text-gray-800 mb-4 mt-2 text-justify">
         {singlePlace?.extraInfo}
       </div>
 
