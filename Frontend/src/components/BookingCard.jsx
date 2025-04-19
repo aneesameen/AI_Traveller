@@ -50,7 +50,9 @@ function BookingCard({ singlePlace }) {
 
     if (user || luser) {
       try {
-        const totalAmount = totalNoOfDays * singlePlace?.price;
+        // const totalAmount = totalNoOfDays * singlePlace?.price;
+        const totalAmount = ((totalNoOfDays * singlePlace?.price) + (totalNoOfDays * singlePlace?.price) * 0.05).toFixed(0);
+
 
         const { data } = await axios.post("/create-order", { totalAmount });
 
