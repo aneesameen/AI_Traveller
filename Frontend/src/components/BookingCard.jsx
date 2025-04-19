@@ -244,8 +244,8 @@ function BookingCard({ singlePlace }) {
                 </h2>
               </div>
               <div className="flex items-center justify-between">
-                <h2 className="text-lg underline">Any service fees</h2>
-                <h2 className="text-lg">₹0</h2>
+                <h2 className="text-lg underline">Service fees (5%)</h2>
+                <h2 className="text-lg">₹{((totalNoOfDays * singlePlace?.price) * 0.05).toFixed(0)}</h2>
               </div>
             </div>
           </div>
@@ -262,9 +262,12 @@ function BookingCard({ singlePlace }) {
         >
           Book Now
           {totalNoOfDays > 0 && (
-            <>
-              <span> ₹{totalNoOfDays * singlePlace?.price}</span>
-            </>
+            <span>
+              ₹{((totalNoOfDays * singlePlace?.price) + (totalNoOfDays * singlePlace?.price) * 0.05).toFixed(0)}
+            </span>
+            // <>
+            //   <span> ₹{totalNoOfDays * singlePlace?.price}</span>
+            // </>
           )}
         </button>
       )}

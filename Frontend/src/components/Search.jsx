@@ -32,7 +32,7 @@ function Search() {
         <>
             {location.pathname === "/main" && (
                 <div className="flex gap-10">
-                    <div className="mx-auto rounded-full fixed top-16 left-0 right-0 w-80 bg-white border-t border-gray-300 py-2 px-4 shadow-md md:static md:w-auto md:bg-transparent md:border md:rounded-full md:py-1 md:px-4 md:shadow-none flex items-center justify-center gap-2">
+                    <div className="z-10 mx-auto rounded-full fixed top-16 left-0 right-0 w-80 bg-white border-t border-gray-300 py-2 px-4 shadow-md md:static md:w-auto md:bg-transparent md:border md:rounded-full md:py-1 md:px-4 md:shadow-none flex items-center justify-center gap-2">
                         <input
                             type="search"
                             className="flex-grow outline-none"
