@@ -216,14 +216,14 @@ function BookingCard({ singlePlace }) {
               />
 
               <div className="mt-4 flex-row gap-4">
-                {/* <label className="flex items-center gap-2">
+                <label className="flex items-center gap-2">
                   <input
                     type="checkbox"
                     checked={wantSMS}
                     onChange={(ev) => setWantSMS(ev.target.checked)}
                   />
                   Receive booking confirmation via SMS
-                </label> */}
+                </label>
 
                 <label className="flex items-center gap-2">
                   <input
